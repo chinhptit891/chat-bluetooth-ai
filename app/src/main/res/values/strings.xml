@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Chat Bluetooth</string>
+    
+    <!-- Navigation -->
+    <string name="connections">Connections</string>
+    <string name="chat">Chat</string>
+    
+    <!-- Bluetooth States -->
+    <string name="bluetooth_is_off">Bluetooth is OFF</string>
+    <string name="bluetooth_is_on">Bluetooth is ON</string>
+    <string name="turn_on_bluetooth">Turn On Bluetooth</string>
+    <string name="turn_on_bluetooth_description">Turn on Bluetooth to connect with nearby devices.</string>
+    
+    <!-- Device Management -->
+    <string name="paired_devices">Paired Devices</string>
+    <string name="available_devices">Available Devices</string>
+    <string name="scan_for_new_devices">Scan for New Devices</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="connecting">Connecting...</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="connected">Connected</string>
+    
+    <!-- Chat -->
+    <string name="chat_with_device">Chat with Device</string>
+    <string name="type_a_message">Type a message...</string>
+    <string name="send">Send</string>
+    
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    
+    <!-- Messages -->
+    <string name="no_paired_devices">No paired devices found. Scan for new ones!</string>
+    <string name="no_new_devices">No new devices found.</string>
+    <string name="scanning">Scanning...</string>
+    <string name="pairing">Pairing...</string>
+    <string name="pair_and_connect">Pair &amp; Connect</string>
+</resources>

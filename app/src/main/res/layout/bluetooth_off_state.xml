@@ -1,0 +1,48 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        app:cardCornerRadius="60dp"
+        app:cardBackgroundColor="?attr/colorPrimaryContainer"
+        android:layout_marginBottom="24dp">
+        
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_bluetooth_24"
+            android:layout_gravity="center"
+            app:tint="?attr/colorOnPrimaryContainer" />
+            
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bluetooth_is_off"
+        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/turn_on_bluetooth_description"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:gravity="center"
+        android:layout_marginBottom="24dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/turnOnBluetoothButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/turn_on_bluetooth"
+        style="@style/Widget.Material3.Button"/>
+
+</LinearLayout> 
