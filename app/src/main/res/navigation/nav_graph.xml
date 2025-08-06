@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/navigation_connections"
-        android:name="com.bluetoothchat.with.ai.ConnectionsFragment"
+        android:name="com.wifichat.with.ai.ConnectionsFragment"
         android:label="@string/connections"
         tools:layout="@layout/fragment_connections" />
 
     <fragment
         android:id="@+id/navigation_chat"
-        android:name="com.bluetoothchat.with.ai.ChatFragment"
+        android:name="com.wifichat.with.ai.ChatFragment"
         android:label="@string/chat"
         tools:layout="@layout/fragment_chat" />
 

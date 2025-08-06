@@ -1,4 +1,4 @@
-package com.bluetoothchat.with.ai
+package com.wifichat.with.ai
 
 import android.Manifest
 import android.content.Context
@@ -10,7 +10,7 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.bluetoothchat.with.ai.databinding.ActivityMainBinding
+import com.wifichat.with.ai.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {

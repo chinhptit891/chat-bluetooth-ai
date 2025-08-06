@@ -1,4 +1,4 @@
-package com.bluetoothchat.with.ai
+package com.wifichat.with.ai
 
 import android.os.Bundle
 import android.util.Log
@@ -6,7 +6,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bluetoothchat.with.ai.databinding.ActivityServerBinding
+import com.wifichat.with.ai.databinding.ActivityServerBinding
 import java.io.*
 import java.net.*
 import java.text.SimpleDateFormat

@@ -1,4 +1,4 @@
-package com.bluetoothchat.with.ai
+package com.wifichat.with.ai
 
 import java.text.SimpleDateFormat
 import java.util.*

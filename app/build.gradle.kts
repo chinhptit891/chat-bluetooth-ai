@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.bluetoothchat.with.ai"
+    namespace = "com.wifichat.with.ai"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.bluetoothchat.with.ai"
+        applicationId = "com.wifichat.with.ai"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

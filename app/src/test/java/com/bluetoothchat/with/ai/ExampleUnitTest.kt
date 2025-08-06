@@ -1,4 +1,4 @@
-package com.bluetoothchat.with.ai
+package com.wifichat.with.ai
 
 import org.junit.Test
 

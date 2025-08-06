@@ -1,4 +1,4 @@
-package com.bluetoothchat.with.ai
+package com.wifichat.with.ai
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.bluetoothchat.with.ai", appContext.packageName)
+        assertEquals("com.wifichat.with.ai", appContext.packageName)
     }
 }

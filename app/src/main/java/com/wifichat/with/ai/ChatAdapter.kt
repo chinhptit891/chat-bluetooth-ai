@@ -1,10 +1,10 @@
-package com.bluetoothchat.with.ai
+package com.wifichat.with.ai
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bluetoothchat.with.ai.databinding.ItemMessageReceivedBinding
-import com.bluetoothchat.with.ai.databinding.ItemMessageSentBinding
+import com.wifichat.with.ai.databinding.ItemMessageReceivedBinding
+import com.wifichat.with.ai.databinding.ItemMessageSentBinding
 
 class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     
