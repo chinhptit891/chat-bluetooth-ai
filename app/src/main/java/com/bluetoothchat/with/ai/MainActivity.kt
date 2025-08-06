@@ -12,13 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bluetoothchat.with.ai.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
-import java.net.Inet4Address
-import java.net.NetworkInterface
 
 class MainActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityMainBinding
-    private lateinit var networkService: NetworkService
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -36,15 +33,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         
-        setupNetworkService()
         requestPermissions()
         setupClickListeners()
     }
     
-    private fun setupNetworkService() {
-        networkService = NetworkService(this)
-    }
-
     private fun setupClickListeners() {
         binding.serverButton.setOnClickListener {
             if (isNetworkAvailable()) {
@@ -80,40 +72,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
     
-    fun isNetworkAvailable(): Boolean {
+    private fun isNetworkAvailable(): Boolean {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
         val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
         
         return activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-    }
-
-    fun getNetworkService(): NetworkService {
-        return networkService
-    }
-
-    fun getLocalIpAddress(): String {
-        try {
-            val interfaces = NetworkInterface.getNetworkInterfaces()
-            while (interfaces.hasMoreElements()) {
-                val networkInterface = interfaces.nextElement()
-                val addresses = networkInterface.inetAddresses
-                while (addresses.hasMoreElements()) {
-                    val address = addresses.nextElement()
-                    if (!address.isLoopbackAddress && address is Inet4Address) {
-                        return address.hostAddress ?: "Unknown"
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            android.util.Log.e("MainActivity", "Error getting IP address: ${e.message}", e)
-        }
-        return "Unknown"
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        networkService.cleanup()
     }
 }
