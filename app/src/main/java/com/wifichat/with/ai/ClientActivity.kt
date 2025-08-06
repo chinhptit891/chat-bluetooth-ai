@@ -93,6 +93,8 @@ class ClientActivity : AppCompatActivity() {
 
                 socket = Socket()
                 socket?.connect(InetSocketAddress(serverIp, PORT), 10000) // 10 second timeout
+                // Enable TCP keep-alive to maintain the connection
+                socket?.setKeepAlive(true)
 
                 Log.d(TAG, "Connected to server")
 

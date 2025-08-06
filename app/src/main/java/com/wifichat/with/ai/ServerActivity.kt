@@ -84,6 +84,9 @@ class ServerActivity : AppCompatActivity() {
 
                 // Chờ client kết nối
                 clientSocket = serverSocket?.accept()
+                // Enable TCP keep-alive to maintain the connection
+                clientSocket?.soTimeout = 0 // disable read timeout if any
+                clientSocket?.keepAlive = true
 
                 Log.d(TAG, "Client connected: ${clientSocket?.remoteSocketAddress}")
 
