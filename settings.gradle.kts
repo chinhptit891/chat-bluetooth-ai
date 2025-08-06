@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Chat Bluetooth"
+rootProject.name = "Chat with WiFi"
 include(":app")
  

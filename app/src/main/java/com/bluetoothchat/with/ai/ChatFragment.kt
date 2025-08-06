@@ -17,6 +17,7 @@ class ChatFragment : Fragment() {
     private val binding get() = _binding!!
     
     private lateinit var chatAdapter: ChatAdapter
+    private lateinit var networkService: NetworkService
     
     private val imagePickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -39,10 +40,35 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
+        setupNetworkService()
         setupToolbar()
         setupChatAdapter()
         setupClickListeners()
         setupMessageInput()
+        updateConnectionStatus()
+    }
+    
+    private fun setupNetworkService() {
+        val mainActivity = activity as? MainActivity
+        networkService = mainActivity?.getNetworkService() ?: NetworkService(requireContext())
+        
+        networkService.setOnMessageReceived { message, senderIp ->
+            requireActivity().runOnUiThread {
+                val senderName = if (senderIp == "SERVER") "Server" else "Device $senderIp"
+                chatAdapter.addMessage(ChatMessage(message, false, senderName))
+            }
+        }
+        
+        networkService.setOnConnectionStatusChanged { isConnected ->
+            requireActivity().runOnUiThread {
+                updateConnectionStatus()
+                if (isConnected) {
+                    Snackbar.make(binding.root, "Connected to chat network", Snackbar.LENGTH_SHORT).show()
+                } else {
+                    Snackbar.make(binding.root, "Disconnected from chat network", Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
     
     private fun setupToolbar() {
@@ -56,9 +82,8 @@ class ChatFragment : Fragment() {
         chatAdapter = ChatAdapter()
         binding.chatRecyclerView.adapter = chatAdapter
         
-        // Add some sample messages for demonstration
-        chatAdapter.addMessage(ChatMessage("Hello!", false))
-        chatAdapter.addMessage(ChatMessage("Hi there! How are you?", true))
+        // Add welcome message
+        chatAdapter.addMessage(ChatMessage("Welcome to LAN Chat! Connect to a device to start chatting.", false, "System"))
     }
     
     private fun setupClickListeners() {
@@ -76,9 +101,22 @@ class ChatFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: android.text.Editable?) {
-                binding.sendButton.isEnabled = !s.isNullOrBlank()
+                binding.sendButton.isEnabled = !s.isNullOrBlank() && networkService.isConnected()
             }
         })
+    }
+    
+    private fun updateConnectionStatus() {
+        val isConnected = networkService.isConnected()
+        binding.sendButton.isEnabled = isConnected && !binding.messageInputEditText.text.isNullOrBlank()
+        
+        if (isConnected) {
+            binding.connectionStatus.text = "Connected"
+            binding.connectionStatus.setTextColor(resources.getColor(android.R.color.holo_green_dark, null))
+        } else {
+            binding.connectionStatus.text = "Disconnected"
+            binding.connectionStatus.setTextColor(resources.getColor(android.R.color.holo_red_dark, null))
+        }
     }
     
     private fun openImagePicker() {
@@ -87,14 +125,17 @@ class ChatFragment : Fragment() {
     
     private fun sendMessage() {
         val messageText = binding.messageInputEditText.text.toString().trim()
-        if (messageText.isNotEmpty()) {
-            chatAdapter.addMessage(ChatMessage(messageText, true))
-            binding.messageInputEditText.text?.clear()
+        if (messageText.isNotEmpty() && networkService.isConnected()) {
+            // Add message to local chat
+            chatAdapter.addMessage(ChatMessage(messageText, true, "You"))
             
-            // Simulate received message after a delay
-            binding.root.postDelayed({
-                chatAdapter.addMessage(ChatMessage("Message received!", false))
-            }, 1000)
+            // Send message through network
+            networkService.sendMessage(messageText)
+            
+            // Clear input
+            binding.messageInputEditText.text?.clear()
+        } else if (!networkService.isConnected()) {
+            Snackbar.make(binding.root, "Not connected to any device", Snackbar.LENGTH_SHORT).show()
         }
     }
     
@@ -103,8 +144,3 @@ class ChatFragment : Fragment() {
         _binding = null
     }
 }
-
-data class ChatMessage(
-    val text: String,
-    val isSent: Boolean
-) 

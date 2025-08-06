@@ -1,36 +1,25 @@
 package com.bluetoothchat.with.ai
 
 import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
 import com.bluetoothchat.with.ai.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
+import java.net.Inet4Address
+import java.net.NetworkInterface
 
 class MainActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityMainBinding
-    private lateinit var bluetoothAdapter: BluetoothAdapter
-    
-    private val bluetoothEnableLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            Snackbar.make(binding.root, "Bluetooth enabled", Snackbar.LENGTH_SHORT).show()
-        } else {
-            Snackbar.make(binding.root, "Bluetooth is required for this app", Snackbar.LENGTH_LONG).show()
-        }
-    }
-    
+    private lateinit var networkService: NetworkService
+
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -38,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         if (allGranted) {
             Snackbar.make(binding.root, "All permissions granted", Snackbar.LENGTH_SHORT).show()
         } else {
-            Snackbar.make(binding.root, "Some permissions are required", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(binding.root, "Some permissions are required for network communication", Snackbar.LENGTH_LONG).show()
         }
     }
     
@@ -47,30 +36,39 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         
-        setupBluetooth()
+        setupNetworkService()
         requestPermissions()
-        setupNavigation()
+        setupClickListeners()
     }
     
-    private fun setupNavigation() {
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
-        binding.bottomNavigation.setupWithNavController(navController)
+    private fun setupNetworkService() {
+        networkService = NetworkService(this)
     }
-    
-    private fun setupBluetooth() {
-        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        bluetoothAdapter = bluetoothManager.adapter
+
+    private fun setupClickListeners() {
+        binding.serverButton.setOnClickListener {
+            if (isNetworkAvailable()) {
+                startActivity(Intent(this, ServerActivity::class.java))
+            } else {
+                Snackbar.make(binding.root, "Please connect to WiFi first", Snackbar.LENGTH_LONG).show()
+            }
+        }
+
+        binding.clientButton.setOnClickListener {
+            if (isNetworkAvailable()) {
+                startActivity(Intent(this, ClientActivity::class.java))
+            } else {
+                Snackbar.make(binding.root, "Please connect to WiFi first", Snackbar.LENGTH_LONG).show()
+            }
+        }
     }
-    
+
     private fun requestPermissions() {
         val permissions = arrayOf(
-            Manifest.permission.BLUETOOTH_SCAN,
-            Manifest.permission.BLUETOOTH_CONNECT,
-            Manifest.permission.BLUETOOTH_ADVERTISE,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.INTERNET,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.CHANGE_WIFI_STATE
         )
         
         val permissionsToRequest = permissions.filter {
@@ -82,18 +80,40 @@ class MainActivity : AppCompatActivity() {
         }
     }
     
-    fun enableBluetooth() {
-        if (!bluetoothAdapter.isEnabled) {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            bluetoothEnableLauncher.launch(enableBtIntent)
+    fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+        
+        return activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+               activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+    }
+
+    fun getNetworkService(): NetworkService {
+        return networkService
+    }
+
+    fun getLocalIpAddress(): String {
+        try {
+            val interfaces = NetworkInterface.getNetworkInterfaces()
+            while (interfaces.hasMoreElements()) {
+                val networkInterface = interfaces.nextElement()
+                val addresses = networkInterface.inetAddresses
+                while (addresses.hasMoreElements()) {
+                    val address = addresses.nextElement()
+                    if (!address.isLoopbackAddress && address is Inet4Address) {
+                        return address.hostAddress ?: "Unknown"
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MainActivity", "Error getting IP address: ${e.message}", e)
         }
+        return "Unknown"
     }
-    
-    fun isBluetoothEnabled(): Boolean {
-        return bluetoothAdapter.isEnabled
-    }
-    
-    fun getBluetoothAdapter(): BluetoothAdapter {
-        return bluetoothAdapter
+
+    override fun onDestroy() {
+        super.onDestroy()
+        networkService.cleanup()
     }
 }

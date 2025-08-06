@@ -56,21 +56,22 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     
     override fun getItemCount(): Int = messages.size
     
-    inner class SentMessageViewHolder(
-        private val binding: ItemMessageSentBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
-        
+    class SentMessageViewHolder(private val binding: ItemMessageSentBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
         fun bind(message: ChatMessage) {
-            binding.messageTextView.text = message.text
+            binding.messageText.text = message.text
+            binding.timeText.text = message.timestamp
         }
     }
     
-    inner class ReceivedMessageViewHolder(
-        private val binding: ItemMessageReceivedBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
-        
+    class ReceivedMessageViewHolder(private val binding: ItemMessageReceivedBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
         fun bind(message: ChatMessage) {
-            binding.messageTextView.text = message.text
+            binding.messageText.text = message.text
+            binding.senderText.text = message.sender
+            binding.timeText.text = message.timestamp
         }
     }
-} 
+}
